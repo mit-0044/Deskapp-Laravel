@@ -1,0 +1,101 @@
+@extends('layouts.main')
+@section('title', 'Debit Card')
+@section('css')
+    <style>
+        input[name=arg_ifsc] {
+            text-transform: uppercase;
+        }
+
+        input[name=arg_bank] {
+            pointer-events: none;
+        }
+
+        input[name=arg_branch] {
+            pointer-events: none;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+    </style>
+@endsection()
+@section('main')
+    <div class="main-container">
+        <div class="pd-ltr-20 xs-pd-20-10">
+            <div class="min-height-200px">
+                <div class="pd-10 card-box mb-20 mt-20">
+                    <div class="col-md-12 pl-0 my-2">
+                        <div class="d-flex justify-content-between mb-20 col-md-12">
+                            <h3 class="text-blue">Update Income Source</h3>
+                            <div class="">
+                                <a href="{{ route('income-source.index') }}" type="button"
+                                    class="btn btn-secondary mx-1 btn-lg">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                    @if (session('error'))
+                        <div class="row">
+                            <div class="col-md-6 ml-3">
+                                <div class="alert alert-danger" role="alert">
+                                    {{ session()->get('error') }}
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="col-md-12 mb-3">
+                        @if ($incomeSources)
+                            @foreach ($incomeSources as $incomeSource)
+                                <form action="{{ route('income-source.update', $incomeSource->id) }}" method="POST">
+                                    @csrf
+                                    @method('put')
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Income Type:<span class="text-danger font-20 mt-0">*</span></label>
+                                                <input class="form-control" type="text" placeholder="Transection Type"
+                                                    name="name" value="{{ $incomeSource->name }}" />
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class=" col-form-label">Fee Percent: <span
+                                                        class="text-danger font-20 mt-0">*</span></label>
+                                                <input class="form-control slider" value="{{ $incomeSource->fee_percent }}" type="range"
+                                                    min="0" max="100" id="fee_percent" name="fee_percent" />
+                                                <span id="range_value">{{ $incomeSource->fee_percent }}</span>%
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-primary btn-lg"
+                                                onclick="return confirm('Do you really want to submit the form?');">Update</button>
+                                            <a role="button" href="{{ route('income-source.index') }}"
+                                                class="btn btn-secondary btn-lg">Cancel</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ asset('jquery/jquery-3.6.4.js') }}"></script>
+    <script>
+        var slider = document.getElementById("fee_percent");
+        var output = document.getElementById("range_value");
+        output.innerHTML = slider.value;
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        }
+    </script>
+@endsection
